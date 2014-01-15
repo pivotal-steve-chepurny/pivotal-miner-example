@@ -20,55 +20,63 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class NewsActivity extends MainActivity {
+public class NewsFragment extends Fragment {
 
+	WebView _webview;
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_news);
-
-		SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(
+				R.layout.activity_news, container, false);
+		
+		SharedPreferences settings = getActivity().getSharedPreferences(PREF_TITLE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		
-		TextView tv = (TextView) findViewById(R.id.news_textView_news);
-		tv.setText("");
-		tv=(TextView) findViewById(R.id.news_textView_status);
+//		TextView tv = (TextView) rootView.findViewById(R.id.news_textView_news);
+//		tv.setText("");
+//		tv=(TextView) rootView.findViewById(R.id.news_textView_status);
+		
+		
+		_webview = (WebView) rootView.findViewById(R.id.news_webview);
+		String summary = "";
+		_webview.loadData(summary, "text/html", null);
 		
 		// Check for network
-		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		
 		// On Network
 		if (networkInfo != null && networkInfo.isConnected()) {
-	        tv.setText("Downloading");
-	        //tv=(TextView) findViewById(R.id.news_textView_news);
+//	        tv.setText("Downloading");
+	        //tv=(TextView) rootView.findViewById(R.id.news_textView_news);
 			//tv.setText(downloadURL(DEFAULT_NEWS_URL));
+			
+			_webview.loadData("Downloading", "text/html", null);
 			new DownloadNewsTask().execute(null,null,null);
 	    } 
 		
 		// Off Network
 		else {
-	        tv = (TextView) findViewById(R.id.news_textView_status);
-	        tv.setText("No Network");
+//	        tv = (TextView) rootView.findViewById(R.id.news_textView_status);
+//	        tv.setText("No Network");
+			_webview.loadData("No Network", "text/html", null);
 	    }
 		
-		//Setup nav spinner
-		Spinner spn_nav = (Spinner) findViewById(R.id.news_spinner_nav);
 		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this,
+		ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getActivity(),
 				       	R.array.nav, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// Apply the adapter to the spinner
-		spn_nav.setAdapter(adapter);
-		spn_nav.setSelection(2);
-		spn_nav.setOnItemSelectedListener(new SpinnerListener(2));
 		
 		if(settings.getBoolean(PREF_NEWS_RUN_ONCE, false)==false)
 		{
@@ -76,6 +84,7 @@ public class NewsActivity extends MainActivity {
 			editor.putBoolean(PREF_NEWS_RUN_ONCE, true);
 			editor.commit();
 		}
+		return rootView;
 	}
 	
 	private String downloadURL(String url_string)  {
@@ -144,10 +153,12 @@ public class NewsActivity extends MainActivity {
 
 		
 		protected void onPostExecute(String result) {
-			SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
+			if(result == null) {
+				return;
+			}
+			SharedPreferences settings = getActivity().getSharedPreferences(PREF_TITLE, 0);
 			SharedPreferences.Editor editor = settings.edit();
-			TextView tv_status = (TextView) findViewById(R.id.news_textView_status);
-			TextView tv_news = (TextView) findViewById(R.id.news_textView_news);
+			TextView tv_status = (TextView) getView().findViewById(R.id.news_textView_status);
 			String saved_news = settings.getString("PREF_NEWS", "");
 			
 			// Can't retrieve news 
@@ -156,17 +167,17 @@ public class NewsActivity extends MainActivity {
 				
 				// No news saved, set news
 				if(saved_news.equals("")==true) { 
-					tv_news.setText("No saved news"); 
+					_webview.loadData("No saved news", "text/html", null);
 				} 
 				
-				else { tv_news.setText(saved_news); }	 // Load the saved news
+				else { _webview.loadData(saved_news, "text/html", null); }	 // Load the saved news
 			}
 			
 			// News downloaded, if different from saved, update
 			else 
 			{
 				tv_status.setText("Up to date");
-				tv_news.setText(result);
+				_webview.loadData(result, "text/html", null);
 			
 			if(saved_news.equals(result)==false) {
 				editor.putString(PREF_NEWS, result); }

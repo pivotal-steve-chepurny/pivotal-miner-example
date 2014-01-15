@@ -13,8 +13,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -30,7 +33,7 @@ import com.ltcminer.miner.SpinnerListener;
 import com.ltcminer.miner.R;
 
 
-public class SettingsActivity extends MainActivity {
+public class SettingsFragment extends Fragment {
 	EditText et_serv;
 	EditText et_user;
 	EditText et_pass;
@@ -69,13 +72,13 @@ public class SettingsActivity extends MainActivity {
 		cb_donate.setChecked(DEFAULT_DONATE);
 		Log.i("LC", "Settings: defaults loaded");
 		
-		Toast.makeText(getBaseContext(), "Defaults Loaded", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(), "Defaults Loaded", Toast.LENGTH_SHORT).show();
 		
 	}
 	
 	public void saveSettings()
 	{
-		SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
+		SharedPreferences settings = getActivity().getSharedPreferences(PREF_TITLE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		StringBuilder sb= new StringBuilder();
 		
@@ -97,7 +100,7 @@ public class SettingsActivity extends MainActivity {
 			sb.setLength(0);
 			long retrypause = Long.parseLong(sb.append(et_retryPause.getText()).toString());
 			
-			settings = getSharedPreferences(PREF_TITLE, 0);
+			settings = getActivity().getSharedPreferences(PREF_TITLE, 0);
 			editor = settings.edit();
 			editor.putString(PREF_URL, url);
 			editor.putString(PREF_USER, user);
@@ -116,12 +119,12 @@ public class SettingsActivity extends MainActivity {
 			if (spn_priority.getSelectedItemPosition()==2) {editor.putInt(PREF_PRIORITY, Thread.MAX_PRIORITY); }
 			Log.i("LC", "Settings: Settings saved");
 			editor.commit();
-			Toast.makeText(getBaseContext(), "Settings Saved", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Settings Saved", Toast.LENGTH_SHORT).show();
 			}
 		else
 		{
 			Log.i("LC", "Settings: Invalid Input");
-			Toast.makeText(getBaseContext(), "Settings: Errors changed to red", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Settings: Errors changed to red", Toast.LENGTH_SHORT).show();
 		}	
 			editor.commit();
 	}
@@ -131,7 +134,7 @@ public class SettingsActivity extends MainActivity {
 	public void loadSettings()
 	{
 		// if does not exist load default
-		SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
+		SharedPreferences settings = getActivity().getSharedPreferences(PREF_TITLE, 0);
 		StringBuilder sb= new StringBuilder();
 		et_serv.setText(settings.getString(PREF_URL, DEFAULT_URL));
 		et_user.setText(settings.getString(PREF_USER, DEFAULT_USER));
@@ -150,7 +153,7 @@ public class SettingsActivity extends MainActivity {
 		if(settings.getInt(PREF_PRIORITY, DEFAULT_PRIORITY)==Thread.MAX_PRIORITY) {spn_priority.setSelection(2);}
 		
 		
-		Toast.makeText(getBaseContext(), "Settings Loaded", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(), "Settings Loaded", Toast.LENGTH_SHORT).show();
 	}
 
 	public boolean verify()
@@ -250,7 +253,7 @@ public class SettingsActivity extends MainActivity {
 		// warn about max priority threads
 		if (spn_priority.getSelectedItemPosition()==2)
 		{
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle("Warning");
 			builder.setMessage("Setting to Thread.MAX_PRIORITY may cause instability");
 			builder.setCancelable(false);
@@ -266,25 +269,27 @@ public class SettingsActivity extends MainActivity {
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		Log.i("LC", "Settings: onCreate");
-		setContentView(R.layout.activity_settings);
-		super.onCreate(savedInstanceState);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(
+				R.layout.activity_settings, container, false);
 		
-		et_serv =(EditText) findViewById(R.id.settings_editText_server);
-		et_user =(EditText) findViewById(R.id.settings_editText_user);
-		et_pass =(EditText) findViewById(R.id.settings_editText_pass);
-		et_thread = (EditText) findViewById(R.id.settings_editText_threads);
-		et_scanTime = (EditText) findViewById(R.id.settings_editText_scantime);
-		et_retryPause= (EditText) findViewById(R.id.settings_editText_retrypause);
-		sb_throttle = (SeekBar) findViewById(R.id.settings_seekBar_throttle);
-		cb_service = (CheckBox) findViewById(R.id.settings_checkBox_background);
-		cb_donate = (CheckBox) findViewById(R.id.settings_checkBox_donate);
-		btn_default = (Button) findViewById(R.id.settings_btn_default);
-		btn_save = (Button) findViewById(R.id.settings_btn_save);
-		btn_load = (Button) findViewById(R.id.settings_btn_load);
-		tv_throttle=(TextView) findViewById(R.id.settings_textView_throttle_lbl);
-		spn_priority = (Spinner) findViewById(R.id.settings_spinner_priority);
+		Log.i("LC", "Settings: onCreate");
+		
+		et_serv =(EditText) rootView.findViewById(R.id.settings_editText_server);
+		et_user =(EditText) rootView.findViewById(R.id.settings_editText_user);
+		et_pass =(EditText) rootView.findViewById(R.id.settings_editText_pass);
+		et_thread = (EditText) rootView.findViewById(R.id.settings_editText_threads);
+		et_scanTime = (EditText) rootView.findViewById(R.id.settings_editText_scantime);
+		et_retryPause= (EditText) rootView.findViewById(R.id.settings_editText_retrypause);
+		sb_throttle = (SeekBar) rootView.findViewById(R.id.settings_seekBar_throttle);
+		cb_service = (CheckBox) rootView.findViewById(R.id.settings_checkBox_background);
+		cb_donate = (CheckBox) rootView.findViewById(R.id.settings_checkBox_donate);
+		btn_default = (Button) rootView.findViewById(R.id.settings_btn_default);
+		btn_save = (Button) rootView.findViewById(R.id.settings_btn_save);
+		btn_load = (Button) rootView.findViewById(R.id.settings_btn_load);
+		tv_throttle=(TextView) rootView.findViewById(R.id.settings_textView_throttle_lbl);
+		spn_priority = (Spinner) rootView.findViewById(R.id.settings_spinner_priority);
 		//Setup throttle seek bar
 		
 		sb_throttle.setMax(100);
@@ -324,24 +329,18 @@ public class SettingsActivity extends MainActivity {
 				loadSettings();
 			}
 		});
-		
-		//Setup nav spinner
-		Spinner spn_nav = (Spinner) findViewById(R.id.settings_spinner_nav);
+
 		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this,
+		ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getActivity(),
 		        R.array.nav, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// Apply the adapter to the spinner
-		spn_nav.setAdapter(adapter);
-		spn_nav.setSelection(1);
-		spn_nav.setOnItemSelectedListener(new SpinnerListener(1));
 		
 		
 		//Setup thread spinner
-		Spinner spn_pri = (Spinner) findViewById(R.id.settings_spinner_priority);
+		Spinner spn_pri = (Spinner) rootView.findViewById(R.id.settings_spinner_priority);
 		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<?> adapter2 = ArrayAdapter.createFromResource(this,
+		ArrayAdapter<?> adapter2 = ArrayAdapter.createFromResource(getActivity(),
 				        R.array.priority, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -353,7 +352,9 @@ public class SettingsActivity extends MainActivity {
 		if (fresh_run==true) {loadSettings();}
 		fresh_run=false;
 		
+		return rootView;
 	}
+	
 }
 
 	

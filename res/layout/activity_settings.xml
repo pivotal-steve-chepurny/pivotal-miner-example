@@ -4,12 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    tools:context=".SettingsActivity" >
-
-    <Spinner
-        android:id="@+id/settings_spinner_nav"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    tools:context=".SettingsFragment" >
+
 
     <ScrollView
         android:id="@+id/scrollView1"
@@ -27,14 +23,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_server_lbl" />
 
-            <EditText
+           <EditText
                 android:id="@+id/settings_editText_server"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10" >
 
-                <requestFocus />
             </EditText>
 
             <TextView

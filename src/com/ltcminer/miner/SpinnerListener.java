@@ -7,8 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.ltcminer.miner.SettingsActivity;
-import com.ltcminer.miner.MainActivity;
+import com.ltcminer.miner.SettingsFragment;
 import com.ltcminer.miner.R;
 
 // Top menu selection SpinnerListener
@@ -33,23 +32,23 @@ public class SpinnerListener implements OnItemSelectedListener {
 			{
 				//Launch Status Activity
 				Log.i("LC", "SpinnerListener:onItemSelected: Status Selected");
-				intent = new Intent(parent.getContext(), StatusActivity.class);
-				parent.getContext().startActivity(intent);
+			//	intent = new Intent(parent.getContext(), StatusActivity.class);
+			//	parent.getContext().startActivity(intent);
 				
 			}
 			if(pos==1)
 			{
 				//Launch Settings Activity
 				Log.i("LC", "SpinnerListener:onItemSelected: Settings Selected");
-				intent = new Intent(parent.getContext(), SettingsActivity.class);
+				intent = new Intent(parent.getContext(), SettingsFragment.class);
 				parent.getContext().startActivity(intent);
 			}
 			if(pos==2)
 			{
 				//Launch News Activity
 				Log.i("LC", "SpinnerListener:onItemSelected: News Selected");
-				intent = new Intent(parent.getContext(), NewsActivity.class);
-				parent.getContext().startActivity(intent);
+			//	intent = new Intent(parent.getContext(), NewsActivity.class);
+			//	parent.getContext().startActivity(intent);
 			}
 		}
 		
