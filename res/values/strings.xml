@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">LTCMiner</string>
+    <string name="app_name">PivotalMiner</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Litecoin Miner</string>
@@ -19,7 +19,7 @@
     <string name="settings_service_lbl">Run in Background</string>
     <string name="settings_donate_lbl">Donate</string>
     <string name="settings_button_save">Save</string>
-    <string name="settings_button_default">Restore Defaults</string>
+    <string name="settings_button_default">Default</string>
     <string name="settings_textView_password_lbl">Password:</string>
     <string name="settings_textView_user_lbl">Username:</string>
     <string name="settings_server_lbl">Server URL</string>
@@ -29,6 +29,8 @@
     <string name="status_textview_speed">Speed:</string>
     <string name="settings_textview_threadpriority">Thread Priority:</string>
     <string name="version">Version: 0.4.1</string>
+    
+    <string name="missing_param">Please enter a valid URL, username, and password</string>
     
     <string name="action_settings">Settings</string>
     <string name="title_news">News</string>
